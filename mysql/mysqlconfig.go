@@ -19,18 +19,20 @@ type MysqlConfig struct {
 
 // Load mysql configs.
 func (mysqlConfig *MysqlConfig) Load() bool {
+	fmt.Printf("Mysql Config - Load: config(%v)\n", mysqlConfig)
+
 	yamlFile, err := ioutil.ReadFile("mysql.yaml")
 	if err != nil {
-		fmt.Printf("Mysql Config load failed, err: %v\n", err)
+		fmt.Printf("Mysql Config - Load: read file failed, err(%v)\n", err)
 		return false
 	}
 
 	err = yaml.Unmarshal(yamlFile, mysqlConfig)
 	if err != nil {
-		fmt.Printf("Mysql Config unmarshal failed, err: %v\n", err)
+		fmt.Printf("Mysql Config - Load: unmarshal failed, err(%v)\n", err)
 		return false
 	}
 
-	fmt.Printf("Mysql Config load success: %v\n", mysqlConfig)
+	fmt.Printf("Mysql Config - Load: success, config(%v)\n", mysqlConfig)
 	return true
 }
