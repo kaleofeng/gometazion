@@ -17,7 +17,7 @@ type MysqlConfig struct {
 	Database string `yaml:"database"`
 }
 
-// Load mysql configs.
+// Load load mysql configs.
 func (mysqlConfig *MysqlConfig) Load() bool {
 	fmt.Printf("Mysql Config - Load: config(%v)\n", mysqlConfig)
 

@@ -12,7 +12,7 @@ type MysqlKit struct {
 	db          *sql.DB
 }
 
-// New an object.
+// New new an object.
 func (mysqlKit *MysqlKit) New(mysqlConfig MysqlConfig) *MysqlKit {
 	fmt.Printf("Mysql Kit - New: config(%v)\n", mysqlKit.mysqlConfig)
 
@@ -20,7 +20,7 @@ func (mysqlKit *MysqlKit) New(mysqlConfig MysqlConfig) *MysqlKit {
 	return mysqlKit
 }
 
-// Open a connection.
+// Open open a connection.
 func (mysqlKit *MysqlKit) Open() bool {
 	fmt.Printf("Mysql Kit - Open: config(%v)\n", mysqlKit.mysqlConfig)
 
@@ -46,13 +46,13 @@ func (mysqlKit *MysqlKit) Open() bool {
 	return true
 }
 
-// Close a connection.
+// Close close a connection.
 func (mysqlKit *MysqlKit) Close() {
 	mysqlKit.db.Close()
 	fmt.Printf("Mysql Kit - Close: config(%v)\n", mysqlKit.mysqlConfig)
 }
 
-// Query rows.
+// Query query rows.
 func (mysqlKit *MysqlKit) Query(query string, args ...interface{}) (*sql.Rows, error) {
 	return mysqlKit.db.Query(query, args...)
 }
