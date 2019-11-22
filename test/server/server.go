@@ -13,7 +13,7 @@ func main() {
 	}
 
 	for {
-		conn, err := listener.Accept();
+		conn, err := listener.Accept()
 		if err != nil {
 			fmt.Printf("Listener - Accept: err(%v)\n", err)
 			break
