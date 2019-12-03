@@ -13,57 +13,70 @@ type ExcelKit struct {
 }
 
 // Open open a file
-func (excelKit *ExcelKit) Open() {
-	fmt.Println("Excel Kit - Open")
+func (excelKit *ExcelKit) New() {
+	fmt.Println("Excel Kit - New")
 	excelKit.file = xlsx.NewFile()
 }
 
 // Save save as a file
 func (excelKit *ExcelKit) Save(filename string) {
 	excelKit.file.Save(filename)
-	fmt.Printf("Excel Kit - Save: filename(%v)\n", filename)
+	fmt.Printf("Excel Kit - Save: filename(%s)\n", filename)
 }
 
-// Write write data into a sheet
-func (excelKit *ExcelKit) Write(sheetName string, data interface{}) {
-	fmt.Printf("Excel Kit - Write: sheetName(%v)\n", sheetName)
+// Write create a new sheet
+func (excelKit *ExcelKit) CreateSheet(sheetName string) (sheet *xlsx.Sheet, err error) {
+	fmt.Printf("Excel Kit - Create Sheet: sheetName(%s)\n", sheetName)
 
-	sheet, err := excelKit.file.AddSheet(sheetName)
-	if err != nil {
-		fmt.Printf("Excel Kit - Write: add sheet failed, err(%v)\n", err)
-		return
-	}
+	sheet, err = excelKit.file.AddSheet(sheetName)
+	return
+}
+
+// Write write data into rows
+func (excelKit *ExcelKit) WriteRows(sheet *xlsx.Sheet, data interface{}) {
+	fmt.Printf("Excel Kit - Write Rows\n")
 
 	value := reflect.ValueOf(data)
+	for i := 0; i < value.Len(); i++ {
+		each := value.Index(i)
+		row := sheet.AddRow()
+		excelKit.writeData(row, each)
+	}
+}
+
+// Write write data into a row
+func (excelKit *ExcelKit) WriteRow(sheet *xlsx.Sheet, data interface{}) {
+	fmt.Printf("Excel Kit - Write Row\n")
+
+	row := sheet.AddRow()
+	value := reflect.ValueOf(data)
+	excelKit.writeData(row, value)
+}
+
+func (excelKit *ExcelKit) writeData(row *xlsx.Row, value reflect.Value) {
 	switch value.Kind() {
 	case reflect.Interface:
-		excelKit.writeInterface(sheet, value)
+		excelKit.writeInterface(row, value)
 	case reflect.String:
-		excelKit.writeString(sheet, value)
+		excelKit.writeString(row, value)
 	case reflect.Struct:
-		excelKit.writeStruct(sheet, value)
+		excelKit.writeStruct(row, value)
 	case reflect.Slice:
-		excelKit.writeSlice(sheet, value)
+		excelKit.writeSlice(row, value)
 	}
-
-	fmt.Printf("Excel Kit - Write: success, sheetName(%v)\n", sheetName)
 }
 
-func (excelKit *ExcelKit) writeInterface(sheet *xlsx.Sheet, value reflect.Value) {
-	row := sheet.AddRow()
+func (excelKit *ExcelKit) writeInterface(row *xlsx.Row, value reflect.Value) {
 	cell := row.AddCell()
 	cell.Value = fmt.Sprintf("%v", value.Interface())
 }
 
-func (excelKit *ExcelKit) writeString(sheet *xlsx.Sheet, value reflect.Value) {
-	row := sheet.AddRow()
+func (excelKit *ExcelKit) writeString(row *xlsx.Row, value reflect.Value) {
 	cell := row.AddCell()
 	cell.Value = fmt.Sprintf("%v", value.Interface())
 }
 
-func (excelKit *ExcelKit) writeStruct(sheet *xlsx.Sheet, value reflect.Value) {
-	row := sheet.AddRow()
-
+func (excelKit *ExcelKit) writeStruct(row *xlsx.Row, value reflect.Value) {
 	//valueType := value.Type()
 	for i := 0; i < value.NumField(); i++ {
 		field := value.Field(i)
@@ -75,16 +88,16 @@ func (excelKit *ExcelKit) writeStruct(sheet *xlsx.Sheet, value reflect.Value) {
 	}
 }
 
-func (excelKit *ExcelKit) writeSlice(sheet *xlsx.Sheet, value reflect.Value) {
+func (excelKit *ExcelKit) writeSlice(row *xlsx.Row, value reflect.Value) {
 	for i := 0; i < value.Len(); i++ {
 		each := value.Index(i)
 		switch each.Kind() {
 		case reflect.Interface:
-			excelKit.writeInterface(sheet, each)
+			excelKit.writeInterface(row, each)
 		case reflect.String:
-			excelKit.writeString(sheet, each)
+			excelKit.writeString(row, each)
 		case reflect.Struct:
-			excelKit.writeStruct(sheet, each)
+			excelKit.writeStruct(row, each)
 		}
 	}
 }
