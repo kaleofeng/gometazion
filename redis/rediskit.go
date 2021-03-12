@@ -1,4 +1,4 @@
-package mz
+package redis
 
 import (
 	"fmt"

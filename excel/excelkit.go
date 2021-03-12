@@ -1,4 +1,4 @@
-package mz
+package excel
 
 import (
 	"fmt"
@@ -77,10 +77,10 @@ func (excelKit *ExcelKit) writeString(row *xlsx.Row, value reflect.Value) {
 }
 
 func (excelKit *ExcelKit) writeStruct(row *xlsx.Row, value reflect.Value) {
-	//valueType := value.Type()
+	// valueType := value.Type()
 	for i := 0; i < value.NumField(); i++ {
 		field := value.Field(i)
-		//fieldType := valueType.Field(i)
+		// fieldType := valueType.Field(i)
 		filedValue := fmt.Sprintf("%v", field.Interface())
 
 		cell := row.AddCell()

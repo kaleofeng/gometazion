@@ -1,3 +1,5 @@
-build/
-out/
-log/
+# Development enviroment
+.idea/
+
+# Runtime redundant
+/log
