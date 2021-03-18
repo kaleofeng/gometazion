@@ -23,14 +23,14 @@ func (aider *Aider) NewFile() {
 }
 
 // OpenFile open an existing file.
-func (aider *Aider) OpenFile(fileName string) (err error) {
-	aider.file, err = xlsx.OpenFile(fileName)
+func (aider *Aider) OpenFile(filePath string) (err error) {
+	aider.file, err = xlsx.OpenFile(filePath)
 	return
 }
 
 // Save save as a file.
-func (aider *Aider) Save(filename string) (err error) {
-	err = aider.file.Save(filename)
+func (aider *Aider) Save(filePath string) (err error) {
+	err = aider.file.Save(filePath)
 	return
 }
 
