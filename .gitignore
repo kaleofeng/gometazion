@@ -3,3 +3,6 @@
 
 # Runtime redundant
 /log
+
+# Test redundant
+/temp

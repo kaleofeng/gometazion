@@ -6,11 +6,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestHelper_NewFile(t *testing.T) {
+func TestAider_NewFile(t *testing.T) {
 	t.Parallel()
 	ast := assert.New(t)
 
-	aider := Aider{}
+	aider := NewAider()
 	aider.NewFile()
 
 	sheet, err := aider.CreateSheet("Info")
@@ -21,16 +21,16 @@ func TestHelper_NewFile(t *testing.T) {
 		{"bar", "20"},
 	}
 	aider.WriteRows(sheet, data)
-	err = aider.Save("test.xlsx")
+	err = aider.Save("../temp/excel.xlsx")
 	ast.NoError(err)
 }
 
-func TestHelper_OpenFile(t *testing.T) {
+func TestAider_OpenFile(t *testing.T) {
 	t.Parallel()
 	ast := assert.New(t)
 
-	aider := Aider{}
-	err := aider.OpenFile("test.xlsx")
+	aider := NewAider()
+	err := aider.OpenFile("../temp/excel.xlsx")
 	ast.NoError(err)
 
 	sheet, err := aider.GetSheet("Info")
@@ -41,6 +41,6 @@ func TestHelper_OpenFile(t *testing.T) {
 		{"bar", "20"},
 	}
 	aider.WriteRows(sheet, data)
-	err = aider.Save("test.xlsx")
+	err = aider.Save("../temp/excel.xlsx")
 	ast.NoError(err)
 }

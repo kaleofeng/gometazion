@@ -1,7 +1,6 @@
 package excel
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
 
@@ -13,39 +12,44 @@ type Aider struct {
 	file *xlsx.File
 }
 
-// NewFile create a new file
+// NewAider new an instance.
+func NewAider() *Aider {
+	return &Aider{}
+}
+
+// NewFile create a new file.
 func (aider *Aider) NewFile() {
 	aider.file = xlsx.NewFile()
 }
 
-// OpenFile open an existing file
+// OpenFile open an existing file.
 func (aider *Aider) OpenFile(fileName string) (err error) {
 	aider.file, err = xlsx.OpenFile(fileName)
 	return
 }
 
-// Save save as a file
+// Save save as a file.
 func (aider *Aider) Save(filename string) (err error) {
 	err = aider.file.Save(filename)
 	return
 }
 
-// CreateSheet create a new sheet
+// CreateSheet create a new sheet.
 func (aider *Aider) CreateSheet(sheetName string) (sheet *xlsx.Sheet, err error) {
 	sheet, err = aider.file.AddSheet(sheetName)
 	return
 }
 
-// GetSheet get an existing sheet
+// GetSheet get an existing sheet.
 func (aider *Aider) GetSheet(sheetName string) (sheet *xlsx.Sheet, err error) {
 	sheet, ok := aider.file.Sheet[sheetName]
 	if !ok {
-		err = errors.New(fmt.Sprintf("no such sheet[%s]", sheetName))
+		err = fmt.Errorf("no such sheet[%s]", sheetName)
 	}
 	return
 }
 
-// WriteRows write data into rows
+// WriteRows write data into rows.
 func (aider *Aider) WriteRows(sheet *xlsx.Sheet, data interface{}) {
 	value := reflect.ValueOf(data)
 	for i := 0; i < value.Len(); i++ {
@@ -55,7 +59,7 @@ func (aider *Aider) WriteRows(sheet *xlsx.Sheet, data interface{}) {
 	}
 }
 
-// WriteRow write data into a row
+// WriteRow write data into a row.
 func (aider *Aider) WriteRow(sheet *xlsx.Sheet, data interface{}) {
 	row := sheet.AddRow()
 	value := reflect.ValueOf(data)
