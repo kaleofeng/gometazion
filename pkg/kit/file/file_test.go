@@ -47,3 +47,26 @@ func TestIsDir(t *testing.T) {
 		ast.Equal(tc.hasError, err != nil)
 	}
 }
+
+func TestListFiles(t *testing.T) {
+	t.Parallel()
+	ast := assert.New(t)
+
+	tcs := []struct {
+		dir         string
+		filePattern string
+		size        int
+		hasError    bool
+	}{
+		{".", "", 2, false},
+		{".", ".*test.*", 1, false},
+		{".", ".*no.*", 0, false},
+		{"no", "", 0, true},
+	}
+
+	for _, tc := range tcs {
+		fps, err := ListFiles(tc.dir, tc.filePattern)
+		ast.Equal(tc.size, len(fps))
+		ast.Equal(tc.hasError, err != nil)
+	}
+}
