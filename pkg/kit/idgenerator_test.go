@@ -11,7 +11,7 @@ func TestNewIdGenerator(t *testing.T) {
 	ast := assert.New(t)
 
 	ig := NewIdGenerator(1000)
-	ast.Equal(ig.CurrentId(), int32(1000))
-	ast.Equal(ig.NextId(), int32(1001))
-	ast.Equal(ig.CurrentId(), int32(1001))
+	ast.Equal(int32(1000), ig.CurrentId())
+	ast.Equal(int32(1001), ig.NextId())
+	ast.Equal(int32(1001), ig.CurrentId())
 }

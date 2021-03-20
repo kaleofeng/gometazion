@@ -13,7 +13,7 @@ func TestAider_Query(t *testing.T) {
 	ast := assert.New(t)
 
 	var config Config
-	err := config.Load("../temp/mysql.yaml")
+	err := config.Load("../../temp/mysql.yaml")
 	ast.NoError(err)
 
 	aider := NewAider(config)

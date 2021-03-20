@@ -9,12 +9,11 @@ type PieceBuffer struct {
 
 // NewPieceBuffer returns a new piece buffer
 func NewPieceBuffer(capacity int) (pb *PieceBuffer) {
-	pb = &PieceBuffer{
+	return &PieceBuffer{
 		make([]byte, capacity),
 		0,
 		0,
 	}
-	return
 }
 
 // Push push data into the buffer
@@ -86,7 +85,7 @@ func (pb *PieceBuffer) Compact() {
 
 	if pb.pushIndex > pb.pullIndex {
 		copy(pb.buffer, pb.buffer[pb.pullIndex:pb.pushIndex])
-		pb.pushIndex = pb.pushIndex - pb.pullIndex
+		pb.pushIndex -= pb.pullIndex
 		pb.pullIndex = 0
 	} else {
 		pb.pushIndex = 0

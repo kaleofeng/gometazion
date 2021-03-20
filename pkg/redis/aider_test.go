@@ -12,7 +12,7 @@ func TestAider_Do(t *testing.T) {
 	ast := assert.New(t)
 
 	var config Config
-	err := config.Load("../temp/redis.yaml")
+	err := config.Load("../../temp/redis.yaml")
 	ast.NoError(err)
 
 	aider := NewAider(config)

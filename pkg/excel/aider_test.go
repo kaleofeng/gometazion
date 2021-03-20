@@ -7,7 +7,6 @@ import (
 )
 
 func TestAider_NewFile(t *testing.T) {
-	t.Parallel()
 	ast := assert.New(t)
 
 	aider := NewAider()
@@ -21,16 +20,15 @@ func TestAider_NewFile(t *testing.T) {
 		{"bar", "20"},
 	}
 	aider.WriteRows(sheet, data)
-	err = aider.Save("../temp/excel.xlsx")
+	err = aider.Save("../../temp/excel.xlsx")
 	ast.NoError(err)
 }
 
 func TestAider_OpenFile(t *testing.T) {
-	t.Parallel()
 	ast := assert.New(t)
 
 	aider := NewAider()
-	err := aider.OpenFile("../temp/excel.xlsx")
+	err := aider.OpenFile("../../temp/excel.xlsx")
 	ast.NoError(err)
 
 	sheet, err := aider.GetSheet("Info")
@@ -41,6 +39,6 @@ func TestAider_OpenFile(t *testing.T) {
 		{"bar", "20"},
 	}
 	aider.WriteRows(sheet, data)
-	err = aider.Save("../temp/excel.xlsx")
+	err = aider.Save("../../temp/excel.xlsx")
 	ast.NoError(err)
 }

@@ -10,13 +10,12 @@ type RingBuffer struct {
 
 // NewRingBuffer returns a new ring buffer
 func NewRingBuffer(capacity int) (pb *RingBuffer) {
-	pb = &RingBuffer{
+	return &RingBuffer{
 		make([]byte, capacity),
 		0,
 		0,
 		0,
 	}
-	return
 }
 
 // Push push data into the buffer
