@@ -68,7 +68,7 @@ func (aider *Aider) ReplaceTextFile(filePath string) error {
 		data = strings.ReplaceAll(data, k, v)
 	}
 
-	return ioutil.WriteFile(filePath+".yaml", []byte(data), os.ModePerm)
+	return ioutil.WriteFile(filePath, []byte(data), os.ModePerm)
 }
 
 func (aider *Aider) getValue(key string) string {

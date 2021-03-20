@@ -3,6 +3,7 @@
 
 # Runtime redundant
 /log
+*.exe
 
 # Test redundant
 /temp
