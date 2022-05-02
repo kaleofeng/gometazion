@@ -25,6 +25,15 @@ func IsDir(path string) (bool, error) {
 	return fileInfo.IsDir(), nil
 }
 
+func MakeDir(path string, perm os.FileMode) (bool, error) {
+	if _, err := os.Stat(path); err != nil {
+		if os.IsNotExist(err) {
+			return true, os.MkdirAll(path, perm)
+		}
+	}
+	return false, nil
+}
+
 func ListFiles(dir string, filePattern string) ([]string, error) {
 	var filePaths []string
 

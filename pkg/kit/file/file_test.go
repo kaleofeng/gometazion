@@ -1,6 +1,7 @@
 package file
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -46,6 +47,30 @@ func TestIsDir(t *testing.T) {
 		ast.Equal(tc.result, result)
 		ast.Equal(tc.hasError, err != nil)
 	}
+}
+
+func TestMakeDir(t *testing.T) {
+	t.Parallel()
+	ast := assert.New(t)
+
+	tcs := []struct {
+		path     string
+		perm     os.FileMode
+		result   bool
+		hasError bool
+	}{
+		{"temp", 0644, true, false},
+		{"temp", 0644, false, false},
+		{"temp/test/1", 0644, true, false},
+	}
+
+	for _, tc := range tcs {
+		result, err := MakeDir(tc.path, tc.perm)
+		ast.Equal(tc.result, result)
+		ast.Equal(tc.hasError, err != nil)
+	}
+
+	_ = os.RemoveAll("temp")
 }
 
 func TestListFiles(t *testing.T) {
