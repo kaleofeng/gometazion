@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAider_Query(t *testing.T) {
+func TestAide_Query(t *testing.T) {
 	t.Parallel()
 	ast := assert.New(t)
 
@@ -16,14 +16,14 @@ func TestAider_Query(t *testing.T) {
 	err := config.Load("../../temp/mysql.yaml")
 	ast.NoError(err)
 
-	aider := NewAider(config)
-	err = aider.Open()
+	aide := NewAide(config)
+	err = aide.Open()
 	ast.NoError(err)
 
-	rows, err := aider.Query("select * from user where user=?", "root")
+	rows, err := aide.Query("select * from user where user=?", "root")
 	ast.NoError(err)
 
-	err = aider.Close()
+	err = aide.Close()
 	ast.NoError(err)
 
 	fmt.Println(rows.Columns())

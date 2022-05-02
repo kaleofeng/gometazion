@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAider_Do(t *testing.T) {
+func TestAide_Do(t *testing.T) {
 	t.Parallel()
 	ast := assert.New(t)
 
@@ -15,14 +15,14 @@ func TestAider_Do(t *testing.T) {
 	err := config.Load("../../temp/redis.yaml")
 	ast.NoError(err)
 
-	aider := NewAider(config)
-	err = aider.Open()
+	aide := NewAide(config)
+	err = aide.Open()
 	ast.NoError(err)
 
-	reply, err := aider.Do("info", "memory")
+	reply, err := aide.Do("info", "memory")
 	ast.NoError(err)
 
-	err = aider.Close()
+	err = aide.Close()
 	ast.NoError(err)
 
 	fmt.Println(string(reply.([]byte)))

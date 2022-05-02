@@ -9,19 +9,19 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-type Aider struct {
+type Aide struct {
 	kvMap map[string]string
 }
 
-// NewAider new an instance.
-func NewAider() *Aider {
-	return &Aider{
+// NewAide new an instance.
+func NewAide() *Aide {
+	return &Aide{
 		kvMap: make(map[string]string),
 	}
 }
 
 // LoadFromIni load key and values from ini config file.
-func (aider *Aider) LoadFromIni(filePath string) error {
+func (aide *Aide) LoadFromIni(filePath string) error {
 	file, err := ini.Load(filePath)
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func (aider *Aider) LoadFromIni(filePath string) error {
 		for _, key := range keys {
 			k := prefix + key.Name()
 			v := key.Value()
-			aider.kvMap[k] = v
+			aide.kvMap[k] = v
 		}
 	}
 
@@ -47,7 +47,7 @@ func (aider *Aider) LoadFromIni(filePath string) error {
 }
 
 // ReplaceTextFile replace placeholders in text file with config values.
-func (aider *Aider) ReplaceTextFile(filePath string) error {
+func (aide *Aide) ReplaceTextFile(filePath string) error {
 	bytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return err
@@ -60,7 +60,7 @@ func (aider *Aider) ReplaceTextFile(filePath string) error {
 	matches := re.FindAllString(data, -1)
 	for _, each := range matches {
 		k := each[2 : len(each)-2]
-		v := aider.getValue(k)
+		v := aide.getValue(k)
 		kvMap[each] = v
 	}
 
@@ -71,8 +71,8 @@ func (aider *Aider) ReplaceTextFile(filePath string) error {
 	return ioutil.WriteFile(filePath, []byte(data), os.ModePerm)
 }
 
-func (aider *Aider) getValue(key string) string {
-	value, ok := aider.kvMap[key]
+func (aide *Aide) getValue(key string) string {
+	value, ok := aide.kvMap[key]
 	if !ok {
 		return "_UNSET_"
 	}

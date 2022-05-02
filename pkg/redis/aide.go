@@ -6,23 +6,23 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
-// Aider provides redis api wrapper.
-type Aider struct {
+// Aide provides redis api wrapper.
+type Aide struct {
 	config Config
 	db     redis.Conn
 }
 
-// NewAider new an instance.
-func NewAider(config Config) *Aider {
-	return &Aider{
+// NewAide new an instance.
+func NewAide(config Config) *Aide {
+	return &Aide{
 		config: config,
 		db:     nil,
 	}
 }
 
 // Open open a connection.
-func (aider *Aider) Open() error {
-	rc := aider.config
+func (aide *Aide) Open() error {
+	rc := aide.config
 	dsn := fmt.Sprintf("%s:%d", rc.Server, rc.Port)
 	db, err := redis.Dial(rc.Network, dsn)
 	if err != nil {
@@ -37,16 +37,16 @@ func (aider *Aider) Open() error {
 		return err
 	}
 
-	aider.db = db
+	aide.db = db
 	return nil
 }
 
 // Close close a connection.
-func (aider *Aider) Close() error {
-	return aider.db.Close()
+func (aide *Aide) Close() error {
+	return aide.db.Close()
 }
 
 // Do execute a command.
-func (aider *Aider) Do(commandName string, args ...interface{}) (reply interface{}, err error) {
-	return aider.db.Do(commandName, args...)
+func (aide *Aide) Do(commandName string, args ...interface{}) (reply interface{}, err error) {
+	return aide.db.Do(commandName, args...)
 }

@@ -62,7 +62,7 @@ func main() {
 
 	fmt.Printf("Command params: %+v\n", cmdParams)
 
-	aider := homing.NewAider()
+	aide := homing.NewAide()
 
 	srcFilePaths, err := file.ListFiles(cmdParams.srcDir, cmdParams.srcFilePattern)
 	if err != nil {
@@ -76,7 +76,7 @@ func main() {
 
 	for _, filePath := range srcFilePaths {
 		fmt.Printf("Load from file[%s]\n", filePath)
-		err = aider.LoadFromIni(filePath)
+		err = aide.LoadFromIni(filePath)
 		if err != nil {
 			fmt.Printf("Error Occurred[%v] while load file[%s]\n", err, filePath)
 		}
@@ -84,7 +84,7 @@ func main() {
 
 	for _, filePath := range dstFilePaths {
 		fmt.Printf("Repalce text file[%s]\n", filePath)
-		err = aider.ReplaceTextFile(filePath)
+		err = aide.ReplaceTextFile(filePath)
 		if err != nil {
 			fmt.Printf("Error Occurred[%v] while replace file[%s]\n", err, filePath)
 		}
