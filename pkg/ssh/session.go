@@ -86,18 +86,10 @@ func (s *Session) Execute(cmd string) error {
 }
 
 func (s *Session) Watch() error {
-	s.wgExit.Add(2)
-	go s.wait()
+	s.wgExit.Add(1)
 	go s.output()
+	go s.wait()
 	return nil
-}
-
-func (s *Session) wait() {
-	defer s.wgExit.Done()
-
-	if err := s.sshSession.Wait(); err != nil {
-		s.leaveChan <- true
-	}
 }
 
 func (s *Session) output() {
@@ -109,10 +101,18 @@ func (s *Session) output() {
 	for {
 		select {
 		case <-s.leaveChan:
+			data := s.outputBuffer.Shift()
+			_, _ = s.outputWriter.Write(data)
+			_, _ = s.outputWriter.Write([]byte(ShellExit))
 			return
 		case <-tick.C:
 			data := s.outputBuffer.Shift()
 			_, _ = s.outputWriter.Write(data)
 		}
 	}
+}
+
+func (s *Session) wait() {
+	_ = s.sshSession.Wait()
+	s.leaveChan <- true
 }

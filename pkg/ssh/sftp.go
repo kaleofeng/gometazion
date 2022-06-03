@@ -1,13 +1,19 @@
 package ssh
 
 import (
-	"github.com/pkg/sftp"
-	"golang.org/x/crypto/ssh"
+	"context"
 	"io"
 	"os"
 	"path"
 	"path/filepath"
+	"sync"
+	"time"
+
+	"github.com/pkg/sftp"
+	"golang.org/x/crypto/ssh"
 )
+
+type StatCallback = func(srcInfo os.FileInfo, srcErr error, dstInfo os.FileInfo, dstErr error)
 
 type Sftp struct {
 	sshClient  *ssh.Client
@@ -37,7 +43,7 @@ func (s *Sftp) Disconnect() error {
 	return nil
 }
 
-func (s *Sftp) Pull(remoteDir, remoteFilename string, localDir, localFilename string) (int64, error) {
+func (s *Sftp) Pull(remoteDir, remoteFilename string, localDir, localFilename string, callbacks ...StatCallback) (int64, error) {
 	remotePath := path.Join(remoteDir, remoteFilename)
 	remoteFile, err := s.sftpClient.Open(remotePath)
 	if err != nil {
@@ -58,15 +64,39 @@ func (s *Sftp) Pull(remoteDir, remoteFilename string, localDir, localFilename st
 	}
 	defer localFile.Close()
 
-	written, err := io.Copy(localFile, remoteFile)
-	if err != nil {
-		return 0, err
-	}
+	ctx, cancel := context.WithCancel(context.Background())
 
-	return written, nil
+	wgExit := &sync.WaitGroup{}
+	wgExit.Add(1)
+
+	go func(ctx context.Context) {
+		defer wgExit.Done()
+
+		statFileInfo := func() {
+			srcInfo, srcErr := s.sftpClient.Stat(remotePath)
+			dstInfo, dstErr := os.Stat(localPath)
+			for _, callback := range callbacks {
+				callback(srcInfo, srcErr, dstInfo, dstErr)
+			}
+		}
+		for {
+			select {
+			case <-ctx.Done():
+				statFileInfo()
+				return
+			case <-time.After(time.Second * 1):
+				statFileInfo()
+			}
+		}
+	}(ctx)
+
+	written, err := io.Copy(localFile, remoteFile)
+	cancel()
+	wgExit.Wait()
+	return written, err
 }
 
-func (s *Sftp) Push(localDir, localFilename string, remoteDir, remoteFilename string) (int64, error) {
+func (s *Sftp) Push(localDir, localFilename string, remoteDir, remoteFilename string, callbacks ...StatCallback) (int64, error) {
 	localPath := filepath.Join(localDir, localFilename)
 	localFile, err := os.Open(localPath)
 	if err != nil {
@@ -81,12 +111,36 @@ func (s *Sftp) Push(localDir, localFilename string, remoteDir, remoteFilename st
 	}
 	defer remoteFile.Close()
 
-	written, err := io.Copy(remoteFile, localFile)
-	if err != nil {
-		return 0, err
-	}
+	ctx, cancel := context.WithCancel(context.Background())
 
-	return written, nil
+	wgExit := &sync.WaitGroup{}
+	wgExit.Add(1)
+
+	go func(ctx context.Context) {
+		defer wgExit.Done()
+
+		statFileInfo := func() {
+			srcInfo, srcErr := os.Stat(localPath)
+			dstInfo, dstErr := s.sftpClient.Stat(remotePath)
+			for _, callback := range callbacks {
+				callback(srcInfo, srcErr, dstInfo, dstErr)
+			}
+		}
+		for {
+			select {
+			case <-ctx.Done():
+				statFileInfo()
+				return
+			case <-time.After(time.Second * 1):
+				statFileInfo()
+			}
+		}
+	}(ctx)
+
+	written, err := io.Copy(remoteFile, localFile)
+	cancel()
+	wgExit.Wait()
+	return written, err
 }
 
 func (s *Sftp) Remove(remoteDir, remoteFilename string) error {
