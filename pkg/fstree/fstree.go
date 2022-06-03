@@ -18,6 +18,8 @@ type FsTree struct {
 	Root FsNode `json:"root"`
 }
 
+// ConstructFsTree generate  file system hierarchy from find command output.
+// Command sample: `find . -exec bash -c 'x=""; if [ -d "{}" ]; then x="/"; fi; printf "{}$x\n"' \; | sort`
 func ConstructFsTree(text string) *FsTree {
 	tree := &FsTree{}
 
