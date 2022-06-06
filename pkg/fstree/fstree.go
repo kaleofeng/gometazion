@@ -2,7 +2,6 @@ package fstree
 
 import (
 	"bufio"
-	"fmt"
 	"strings"
 )
 
@@ -18,7 +17,7 @@ type FsTree struct {
 	Root FsNode `json:"root"`
 }
 
-// ConstructFsTree generate  file system hierarchy from find command output.
+// ConstructFsTree generate file system hierarchy from find command output.
 // Command sample: `find . -exec bash -c 'x=""; if [ -d "{}" ]; then x="/"; fi; printf "{}$x\n"' \; | sort`
 func ConstructFsTree(text string) *FsTree {
 	tree := &FsTree{}
@@ -34,11 +33,11 @@ func ConstructFsTree(text string) *FsTree {
 		}
 
 		line := buf.Text()
-		fmt.Println(line)
+		if strings.Contains(line, FileNotFound) {
+			continue
+		}
 
 		elements := strings.Split(line, "/")
-		fmt.Println(len(elements), elements)
-
 		size := len(elements)
 		if size < 2 {
 			continue
@@ -71,10 +70,15 @@ func ConstructFsTree(text string) *FsTree {
 			Children: make([]*FsNode, 0),
 		}
 
+		parent, ok := nodeMap[parentPath]
+		if !ok {
+			parent = nodeMap[""]
+		}
+		parent.Children = append(parent.Children, node)
+
 		if node.Type == TypeDirectory {
 			nodeMap[node.Path] = node
 		}
-		nodeMap[node.Parent].Children = append(nodeMap[node.Parent].Children, node)
 	}
 
 	return tree
