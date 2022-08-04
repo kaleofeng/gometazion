@@ -13,8 +13,6 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-type StatCallback = func(srcInfo os.FileInfo, srcErr error, dstInfo os.FileInfo, dstErr error)
-
 type Sftp struct {
 	sshClient  *ssh.Client
 	sftpClient *sftp.Client
@@ -53,7 +51,7 @@ func (s *Sftp) Pull(remoteDir, remoteFilename string, localDir, localFilename st
 
 	if _, err := os.Stat(localDir); err != nil {
 		if os.IsNotExist(err) {
-			os.MkdirAll(localDir, 0744)
+			os.MkdirAll(localDir, 0755)
 		}
 	}
 

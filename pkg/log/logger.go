@@ -35,7 +35,7 @@ func NewLogger(config *Config) (*Logger, error) {
 	}
 
 	filePath := filepath.Join(config.Dir, config.Filename)
-	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0744)
+	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		return nil, err
 	}
